@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Birthday Box with Bubbles</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.6s ease;
+      text-align: center;
+      z-index: 10;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .box h1 {
+      color: #ff4081;
+      margin-bottom: 10px;
+    }
+
+    .box p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .btn, .trigger-question {
+  padding: 15px 35px;
+  font-size: 20px;
+  background: linear-gradient(45deg, #ff4081, #ff80ab);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.4s ease;
+  box-shadow: 0 8px 20px rgba(255, 64, 129, 0.4);
+  animation: pulse 1.5s infinite;
+  z-index: 10;
+  margin-top: 20px;
+}
+
+.btn:hover, .trigger-question:hover {
+  background: linear-gradient(45deg, #ff3366, #ff6699);
+  box-shadow: 0 10px 25px rgba(255, 64, 129, 0.5);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 64, 129, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 20px rgba(255, 64, 129, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 64, 129, 0);
+  }
+}
+
+
+    .bubble {
+      position: absolute;
+      bottom: -50px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: moveUp 5s linear infinite;
+    }
+
+    @keyframes moveUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -150px;
+      width: 120px;
+      height: 120px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      animation: floatBalloon var(--duration, 5s) linear forwards;
+      animation-delay: var(--delay, 0s);
+      z-index: 5;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 60px;
+      background: #555;
+    }
+
+    @keyframes floatBalloon {
+      0% {
+        transform: translateY(0);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-120vh);
+        opacity: 1;
+      }
+    }
+
+    .photo-frame {
+      width: 150px;
+      height: 150px;
+      border: 4px solid #ff4081;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+
+    /* Popup Box */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 2px solid #ff4081;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 20;
+      text-align: center;
+    }
+
+    .popup button {
+      margin: 10px;
+    }
+
+    .no-btn {
+      position: relative;
+    }
+    /* Floating red hearts in box */
+.heart {
+  position: absolute;
+  color: red;
+  font-size: 24px;
+  animation: floatHeart 5s linear forwards;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes floatHeart {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-250px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Heart boom on 'Yes' */
+.heart-boom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 40px;
+  color: red;
+  transform: translate(-50%, -50%);
+  animation: explodeHearts 0.8s ease-out forwards;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@keyframes explodeHearts {
+  0% {
+    transform: scale(0.5) translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(5) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+.no-btn{
+  /* position: absolute; */
+  transition: all 0.3s ease;
+  background-color: #ff4081;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+/* Main Butterfly */
+.butterfly {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-image: url('mainbutterfly.png'); /* Replace with your main butterfly image */
+  background-size: cover;
+  animation: flyToPhoto 8s ease-in-out forwards;
+  z-index: 20;
+}
+
+/* Tiny butterflies flying randomly */
+.tiny-butterfly {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-image: url('small.png'); /* Replace with your small butterfly image */
+  background-size: cover;
+  animation: floatTiny linear infinite;
+  z-index: 15;
+}
+
+@keyframes flyToPhoto {
+  0% {
+    left: -100px;
+    top: 70%;
+    transform: rotate(20deg);
+  }
+  30% {
+    left: 30%;
+    top: 30%;
+    transform: rotate(-20deg);
+  }
+  60% {
+    left: 60%;
+    top: 10%;
+    transform: rotate(10deg);
+  }
+  100% {
+    left: 50%;
+    top: 50%;
+    transform: rotate(0deg) scale(0.7);
+  }
+}
+
+@keyframes floatTiny {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-50px) rotate(15deg);
+  }
+  100% {
+    transform: translateY(0) rotate(-15deg);
+    opacity: 0.8;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <button class="btn" onclick="showBox()">🎉 Hey! Grab your gift</button>
+
+  <div class="box" id="birthdayBox">
+    <div class="photo-frame">
+      <img src="image1.jpg" alt="Profile" />
+    </div>
+    <h1>🎂 Happy Birthday!</h1>
+    <p>Wishing you a year full of joy and a life full of success! 🥳</p>
+    <button class="trigger-question" onclick="showQuestion()">❤️Click Here</button>
+  </div>
+
+  <!-- Popup box -->
+  <div class="popup" id="popupBox">
+    <p>Do you love me ❤️ and accept me as your life mate ?</p>
+    <p>Its a Promise!</p>
+    <button class="no-btn" id="yesBtn" onclick="handleYes()">Yes</button>
+    <button class="no-btn" id="noBtn" onmouseover="moveNo()">No</button>
+  </div>
+<audio id="birthdaySong" src="birthday.mp3" preload="auto"></audio>
+
+  <script>
+    function showBox() {
+
+      document.querySelector('.btn').style.display = 'none';
+      document.getElementById('birthdaySong').play();
+      const box = document.getElementById('birthdayBox');
+      box.style.display = 'flex';
+
+      // Bubbles
+      for (let i = 0; i < 30; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        bubble.style.width = `${Math.random() * 20 + 10}px`;
+        bubble.style.height = bubble.style.width;
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.animationDuration = `${Math.random() * 15 + 8}s`;
+        bubble.style.background = `rgba(${randomColor()}, ${Math.random() * 0.5 + 0.3})`;
+        document.body.appendChild(bubble);
+        setTimeout(() => bubble.remove(), 420000);
+      }
+
+      setTimeout(createBalloons, 900);
+      setTimeout(() => {
+  // addMainButterfly();
+  spawnTinyButterflies();
+}, 2000);
+
+    }
+
+    function createBalloons() {
+      const balloonImages = ['image2.jpg', 'image3.jpg'];
+     for (let i = 0; i < 3; i++) { balloonImages.forEach((img, i) => {
+        const balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+        balloon.style.backgroundImage = `url('${img}')`;
+        balloon.style.borderColor = `rgb(${randomColor()})`;
+        balloon.style.borderWidth = `30px`;
+        balloon.style.left = `${Math.random() * 80 + 10}%`;
+        const delay = Math.random() * 4;
+        const duration = Math.random() * 4 + 4;
+        balloon.style.setProperty('--delay', `${delay}s`);
+        balloon.style.setProperty('--duration', `${duration}s`);
+        document.body.appendChild(balloon);
+        setTimeout(() => balloon.remove(), (delay + duration) * 1000);
+      });
+    }
+    }
+
+    function randomColor() {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      return `${r}, ${g}, ${b}`;
+    }
+
+    function showQuestion() {
+      document.getElementById('popupBox').style.display = 'block';
+    }
+
+    function handleYes() {
+      alert('🎉 Congratulations!');
+      // Replace this with backend integration if needed
+      window.location.href = "https://wa.me/917618724668?text=Yes,%20I%20want%20to%20celebrate%20together!"; // Mock SMS using WhatsApp
+    }
+
+    function moveNo() {
+      const noBtn = document.getElementById('noBtn');
+      const maxX = window.innerWidth - noBtn.offsetWidth;
+      const maxY = window.innerHeight - noBtn.offsetHeight;
+      const newX = Math.random() * maxX;
+      const newY = Math.random() * maxY;
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${newX}px`;
+      noBtn.style.top = `${newY}px`;
+    }
+    // Floating red hearts inside the box
+setInterval(() => {
+  const box = document.getElementById('birthdayBox');
+  if (box.style.display !== 'flex') return;
+
+  const heart = document.createElement('div');
+  heart.classList.add('heart');
+  heart.innerHTML = '❤️';
+  heart.style.left = `${Math.random() * 90 + 5}%`;
+  heart.style.bottom = '0';
+  box.appendChild(heart);
+
+  setTimeout(() => heart.remove(), 5000);
+}, 1000);
+
+// Heart explosion when clicking Yes
+function handleYes() {
+  const box = document.getElementById('birthdayBox');
+  for (let i = 0; i < 20; i++) {
+    const boom = document.createElement('div');
+    boom.classList.add('heart-boom');
+    boom.innerHTML = '❤️';
+    boom.style.top = `${50 + (Math.random() - 0.5) * 30}%`;
+    boom.style.left = `${50 + (Math.random() - 0.5) * 30}%`;
+    box.appendChild(boom);
+    setTimeout(() => boom.remove(), 800);
+  }
+
+  // WhatsApp link
+  setTimeout(() => {
+    window.location.href = "https://wa.me/919108368454?text=Yes,%20I%20will!%20accept%20you%20as%20my%20mate%20and%20love%20you!";
+  }, 1000);
+}
+// Add the main butterfly after showing the box
+// function addMainButterfly() {
+//   const butterfly = document.createElement('div');
+//   butterfly.classList.add('butterfly');
+//   document.body.appendChild(butterfly);
+
+//   // Remove after it lands to stay on photo
+//   setTimeout(() => {
+//     butterfly.style.animation = 'none';
+//     butterfly.style.left = 'calc(50% - 175px)';
+//     butterfly.style.top = 'calc(50% - 120px)';
+//   }, 8000);
+// }
+
+// Tiny butterflies flying around randomly
+function spawnTinyButterflies() {
+  const num = 9;
+  for (let i = 0; i < num; i++) {
+    const tiny = document.createElement('div');
+    tiny.classList.add('tiny-butterfly');
+    tiny.style.left = `${Math.random() * 90}%`;
+    tiny.style.top = `${Math.random() * 90}%`;
+    tiny.style.animationDuration = `${6 + Math.random() * 3}s`;
+    document.body.appendChild(tiny);
+  }
+}
+
+  </script>
+</body>
+</html>
